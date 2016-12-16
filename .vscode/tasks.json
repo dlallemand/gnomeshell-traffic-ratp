@@ -1,0 +1,39 @@
+{
+    "version": "0.1.0",
+    "command": "sh",
+    "isShellCommand": true,
+    "showOutput": "always",
+    "args": [
+        "-c"
+    ],
+    "tasks": [
+        {
+            "taskName": "la",
+            "suppressTaskName": true,
+            "args": [
+                "/bin/ls -la"
+            ]
+        },
+        {
+            "taskName": "hoge",
+            "suppressTaskName": true,
+            "args": [
+                "\"echo hoge\""
+            ]
+        },
+        {
+            "taskName": "build",
+            "suppressTaskName": true,
+            "args": [
+                "cp -R * /home/didier/.local/share/gnome-shell/extensions && echo OK || echo failed"
+            ]
+        },
+        {
+            "taskName": "install",
+            "suppressTaskName": true,
+            "args": [
+                "\"cd build; gdb bin/my-executable\""
+            ]
+        }
+    ]
+}

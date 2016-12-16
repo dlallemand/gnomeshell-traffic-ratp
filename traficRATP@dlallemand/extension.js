@@ -11,7 +11,7 @@ let text, button, status_icon;
 
 let mainloop;
 
-let _line = "B";
+let _line = "A";
 
 let _laststatus = "";
 
@@ -97,7 +97,6 @@ function updateStatus() {
 
 
 function trace(text) {
-
     global.log("[TraficRATP] " + text);
 }
 
@@ -140,7 +139,7 @@ function mainloopStop() {
     }
 }
 
-function clickUpdateStatus(){
+function clickUpdateStatus() {
     _laststatus = "";
     updateStatus();
 }
@@ -168,7 +167,7 @@ function init(extensionMeta) {
 
 function enable() {
     Main.panel._rightBox.insert_child_at_index(button, 0);
-    mainloopInit(); 
+    mainloopInit();
 }
 
 function disable() {
