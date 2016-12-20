@@ -11,7 +11,7 @@ let text, button, status_icon;
 
 let mainloop;
 
-let _line = "A";
+let _line = "B";
 
 let _laststatus = "";
 
@@ -57,8 +57,12 @@ function changeIconStatus(status) {
         status_icon = createStatusIcon('status-green');
     }
     else if (status == "alerte") {
-        status_icon = createStatusIcon('status-red');
-    } else {
+        status_icon = createStatusIcon('status-orange');
+    } 
+    else if (status == "critique"){
+        status_icon = createStatusIcon('status-red')
+    }
+    else {
         status_icon = createStatusIcon('status-grey');
     }
     button.set_child(status_icon);
