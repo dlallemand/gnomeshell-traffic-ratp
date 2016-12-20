@@ -1,13 +1,30 @@
+// Docker menu extension
+// @author Didier LALLEMAND <didier.lallemand@gmail.com>
 
-const St = imports.gi.St;
+/**
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 2 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
+'use strict';
+
 const Main = imports.ui.main;
-const Tweener = imports.ui.tweener;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const TrafficRatpMenu = Me.imports.src.trafficRatpMenu;
 const Soup = imports.gi.Soup;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
-const PopupMenu = imports.ui.popupMenu;
 
-let text, button, status_icon;
+
 
 let mainloop;
 
@@ -19,53 +36,17 @@ const ICON_SIZE_INDICATOR = 16;
 
 const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2"
 
-
+function mainloopInit() {
+    mainloop = Mainloop.timeout_add_seconds(30, Lang.bind(this, updateStatus));
+}
 
 function buildRequestTrafic(type, line) {
     let req = BASE_URL + "/traffic/" + type + "/" + line;
     return req;
 }
 
-function _hideHello() {
-    Main.uiGroup.remove_actor(text);
-    text = null;
-}
-
-
-/*
- * Return status icon.
- */
-function createStatusIcon(icon_name) {
-    let params = { icon_name: icon_name, icon_size: ICON_SIZE_INDICATOR, style_class: "system-status-icon" };
-
-    // St.IconType got removed in Gnome 3.6. This is for backwards compatibility with Gnome 3.4.
-    if (St.IconType) {
-        params.icon_type = St.IconType.FULLCOLOR;
-    }
-
-    let ic = new St.Icon(params);
-
-    trace("get icon (" + icon_name + ") : " + ic);
-
-    return ic;
-}
-
-
-function changeIconStatus(status) {
-
-    if (status == "normal") {
-        status_icon = createStatusIcon('status-green');
-    }
-    else if (status == "alerte") {
-        status_icon = createStatusIcon('status-orange');
-    } 
-    else if (status == "critique"){
-        status_icon = createStatusIcon('status-red')
-    }
-    else {
-        status_icon = createStatusIcon('status-grey');
-    }
-    button.set_child(status_icon);
+function trace(text) {
+    global.log("[TraficRATP] " + text);
 }
 
 function updateStatus() {
@@ -79,8 +60,8 @@ function updateStatus() {
     _httpSession.queue_message(message, Lang.bind(this,
         function (_httpSession, message) {
             if (message.status_code !== 200) {
-                printMessage("Service non disponible");
-                changeIconStatus("");
+                //printMessage("Service non disponible");
+                //changeIconStatus("");
                 return;
             }
 
@@ -88,52 +69,17 @@ function updateStatus() {
             // do something with the data
             trace("Request response :" + json.response.title);
             if (_laststatus !== json.response.slug) {
-                printMessage("Trafic ligne " + _line + " :" + json.response.title + "\n " + json.response.message);
+                //printMessage();
             }
-            changeIconStatus(json.response.slug);
+            //
+            _indicator.setMessage("Trafic ligne " + _line + " : " + json.response.title + "\n" + json.response.message);
+            _indicator.changeIconStatus(json.response.slug);
             _laststatus = json.response.slug;
         })
     );
     trace("Step : End");
 
     return true;
-}
-
-
-function trace(text) {
-    global.log("[TraficRATP] " + text);
-}
-
-function printMessage(msg) {
-    trace("print message");
-
-    //getStatus();
-
-
-    if (!text) {
-        text = new St.Label({ style_class: 'helloworld-label', text: msg });
-        Main.uiGroup.add_actor(text);
-    }
-
-    text.opacity = 255;
-
-    let monitor = Main.layoutManager.primaryMonitor;
-
-    text.set_position(monitor.x + Math.floor(monitor.width / 2 - text.width / 2),
-        monitor.y + Math.floor(monitor.height / 2 - text.height / 2));
-
-    Tweener.addTween(text,
-        {
-            opacity: 0,
-            time: 2,
-            transition: 'easeOutQuad',
-            onComplete: _hideHello
-        });
-}
-
-
-function mainloopInit() {
-    mainloop = Mainloop.timeout_add_seconds(30, Lang.bind(this, updateStatus));
 }
 
 function mainloopStop() {
@@ -143,38 +89,29 @@ function mainloopStop() {
     }
 }
 
-function clickUpdateStatus() {
-    _laststatus = "";
-    updateStatus();
-}
-
+// Triggered when extension has been initialized
 function init(extensionMeta) {
-    button = new St.Bin({
-        style_class: 'panel-button',
-        reactive: true,
-        can_focus: true,
-        x_fill: true,
-        y_fill: false,
-        track_hover: true
-    });
-
     let theme = imports.gi.Gtk.IconTheme.get_default();
     theme.append_search_path(extensionMeta.path + "/icons");
 
-    status_icon = createStatusIcon('status-grey');
-
-    updateStatus();
-
-    button.set_child(status_icon);
-    button.connect('button-press-event', clickUpdateStatus);
 }
 
+// The ratp indicator
+let _indicator;
+
+// Triggered when extension is enabled
 function enable() {
-    Main.panel._rightBox.insert_child_at_index(button, 0);
+    trace("enable traffic ratp");
+    _indicator = new TrafficRatpMenu.TrafficRatpMenu;
+    trace("start indicator traffic ratp")
+    Main.panel.addToStatusArea('traffic-ratp-menu', _indicator);
+    trace("add menu traffic ratp");
+    updateStatus();
     mainloopInit();
 }
 
+// Triggered when extension is disabled
 function disable() {
     mainloopStop();
-    Main.panel._rightBox.remove_child(button);
+    _indicator.destroy();
 }
