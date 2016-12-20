@@ -25,7 +25,7 @@
             "taskName": "build",
             "suppressTaskName": true,
             "args": [
-                "cp -R * /home/didier/.local/share/gnome-shell/extensions && echo OK || echo failed"
+                "cp -R * ~/.local/share/gnome-shell/extensions && echo OK || echo failed"
             ]
         },
         {
