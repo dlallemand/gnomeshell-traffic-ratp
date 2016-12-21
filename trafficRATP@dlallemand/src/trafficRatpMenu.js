@@ -46,8 +46,9 @@ const TrafficRatpMenu = new Lang.Class({
         let ic = new St.Icon(params);
         return ic;
     },
-    _init: function () {
+    _init: function (callback) {
         this.parent(0.0, _("Traffic Ratp"));
+        this.udpateCallback = callback;
 
         let hbox = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
         // let gicon = Gio.icon_new_for_string(Me.path + "/icons/status-grey.svg");
@@ -93,7 +94,7 @@ const TrafficRatpMenu = new Lang.Class({
 
     // Show trafficRatp menu icon only if installed and append trafficRatp containers
     _renderMenu: function () {
-        
+        this.udpateCallback();
         let errMsg = _("Service not available");
         if (this.message != null) {
             errMsg = this.message;

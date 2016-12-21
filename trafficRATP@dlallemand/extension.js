@@ -20,6 +20,7 @@ const Main = imports.ui.main;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const TrafficRatpMenu = Me.imports.src.trafficRatpMenu;
+const RatpAPI = Me.imports.src.ratpAPI;
 const Soup = imports.gi.Soup;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
@@ -31,64 +32,47 @@ let mainloop;
 
 let compteur = 0;
 
-let _line = "A";
+let lastStatus = "";
 
-let _laststatus = "";
+let currentLine;
 
 let settings;
 
-const ICON_SIZE_INDICATOR = 16;
-
-const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2"
 
 function mainloopInit() {
     mainloop = Mainloop.timeout_add_seconds(30, Lang.bind(this, updateStatus));
 }
 
-function buildRequestTrafic(type, line) {
-    let req = BASE_URL + "/traffic/" + type + "/" + line;
-    return req;
-}
 
 function trace(text) {
     global.log("[TraficRATP] " + text);
 }
 
+function updateMessage(json) {
+    if (json != null) {
+        if (lastStatus !== json.response.slug) {
+            _indicator.changeIconStatus(json.response.slug);
+            let debug = "";//  (" + compteur + ") - date : " + new Date();
+            let locale = 'fr';
+            let dd = Moment.moment(json._meta.date).locale(locale).format('llll'); // December 21st 2016, 5:46:27 pm
+            _indicator.setMessage(dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message + debug);
+        }
+
+        lastStatus = "line_" + currentLine + "_" + json.response.slug;
+
+    } else {
+        _indicator.changeIconStatus("");
+        _indicator.setMessage(null);
+    }
+}
+
 function updateStatus() {
-    compteur++;
     settings = Convenience.getSettings();
-    _line = settings.get_string('rer');
-
-    // new sesssion
-    let _httpSession = new Soup.Session();
-    let params = {};
-    let req = buildRequestTrafic("rers", _line);
-    //trace("Request:" + req);
-    let message = Soup.form_request_new_from_hash('GET', req, params);
-    // execute the request and define the callback
-    _httpSession.queue_message(message, Lang.bind(this,
-        function (_httpSession, message) {
-            if (message.status_code !== 200) {
-                _indicator.setMessage(null);
-                _indicator.changeIconStatus("");
-                return;
-            }
-
-            let json = JSON.parse(message.response_body.data);
-            //trace("Request response :" + json.response.title);
-            if (_laststatus !== json.response.slug) {
-                _indicator.changeIconStatus(json.response.slug);
-                let debug = "";//  (" + compteur + ") - date : " + new Date();
-                let locale = 'fr';
-                let dd = Moment.moment(json._meta.date).locale(locale).format('llll'); // December 21st 2016, 5:46:27 pm
-                _indicator.setMessage(dd + "\n-"+ "\nTrafic ligne " + _line + " : " + json.response.title + "\n" + json.response.message + debug);
-            }
-
-            _laststatus = "line_" + _line + "_" + json.response.slug;
-        })
-    );
-    trace("Update Status : " + compteur);
-
+    currentLine = settings.get_string('line');
+    let lineType = settings.get_string('line-type');
+    trace("call RatpAPI begin...");
+    RatpAPI.getTraffic(lineType, currentLine, updateMessage);
+    trace("call RatpAPI end.");
     return true;
 }
 
@@ -113,11 +97,8 @@ let _indicator;
 
 // Triggered when extension is enabled
 function enable() {
-    trace("enable traffic ratp");
-    _indicator = new TrafficRatpMenu.TrafficRatpMenu;
-    trace("start indicator traffic ratp")
+    _indicator = new TrafficRatpMenu.TrafficRatpMenu(updateStatus);
     Main.panel.addToStatusArea('traffic-ratp-menu', _indicator);
-    trace("add menu traffic ratp");
     updateStatus();
     mainloopInit();
 }

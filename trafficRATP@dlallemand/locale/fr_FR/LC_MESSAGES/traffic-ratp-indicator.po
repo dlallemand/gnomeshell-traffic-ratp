@@ -24,3 +24,15 @@ msgstr "RER"
 
 msgid "Subways"
 msgstr "Métros"
+
+msgid "Subway"
+msgstr "Métro"
+
+msgid "Tramways"
+msgstr "Tramways"
+
+msgid "Bus"
+msgstr "Bus"
+
+msgid "Noctiliens"
+msgstr "Noctiliens"
