@@ -1,0 +1,26 @@
+# translations strings for jenkins-indicator gnome shell extension
+
+# plugin translations
+msgid "Auto-refresh"
+msgstr "Rafraîchissement automatique"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Error"
+msgstr "Erreur"
+
+msgid "Line"
+msgstr "Ligne"
+
+msgid "Service not available"
+msgstr "Service indisponible"
+
+msgid "Line Type"
+msgstr "Type de ligne"
+
+msgid "RER"
+msgstr "RER"
+
+msgid "Subways"
+msgstr "Métros"

@@ -1,0 +1,10 @@
+{
+    "description": "Give a status of RATP traffic",
+    "shell-version": [
+        "3.20.4"
+    ],
+    "settings-schema": "org.gnome.shell.extensions.traffic-ratp-indicator",
+    "gettext-domain": "traffic-ratp-indicator",
+    "uuid": "trafficRATP@dlallemand",
+    "name": "Traffic RATP"
+}

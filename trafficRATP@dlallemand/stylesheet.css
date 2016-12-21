@@ -1,0 +1,31 @@
+
+.helloworld-label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: rgba(10,10,10,0.7);
+    border-radius: 5px;
+    padding: .5em;
+}
+
+.icon-status-grey {
+	background-image: url("icons/status-grey.png");
+	width: 16px;
+	height: 16px;
+}
+
+
+.icon-status-red {
+	background-image: url("icons/status-red.png");
+	width: 16px;
+	height: 16px;
+}
+
+.icon-status-green {
+	background-image: url("icons/status-green.png");
+	width: 16px;
+	height: 16px;
+}
+
+
+

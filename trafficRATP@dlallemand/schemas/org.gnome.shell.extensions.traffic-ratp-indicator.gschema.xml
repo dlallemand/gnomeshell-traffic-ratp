@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schemalist gettext-domain="gnome3-traffic-ratp">
+	
+	<schema path="/org/gnome/shell/extensions/traffic-ratp-indicator/" id="org.gnome.shell.extensions.traffic-ratp-indicator">
+
+		<key type="s" name="line-type">
+			<default>'rers'</default>
+			<summary>Line type</summary>
+			<description>Settings Traffic RATP to set type of line preference</description>
+		</key>
+		<key type="s" name="rer">
+			<default>'B'</default>
+			<summary>Line</summary>
+			<description>Settings Traffic RATP to set line preference</description>
+		</key>
+		
+	 
+	</schema>
+</schemalist>
