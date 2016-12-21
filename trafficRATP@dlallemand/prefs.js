@@ -80,8 +80,10 @@ function buildPrefsWidget() {
 	// *** overall frame ***
 	let frame = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, border_width: 10 });
 
-	frame.add(hboxLineType);
-	// add new server button
+	// add line type selection
+	// ------frame.add(hboxLineType);
+	
+	// add RER selection
 	frame.add(hboxLine);
 
 	// add notebook

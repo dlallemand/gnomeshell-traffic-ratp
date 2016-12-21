@@ -24,6 +24,7 @@ const Soup = imports.gi.Soup;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 const Convenience = Me.imports.lib.convenience;
+const Moment = Me.imports.lib.moment;
 
 
 let mainloop;
@@ -78,7 +79,9 @@ function updateStatus() {
             if (_laststatus !== json.response.slug) {
                 _indicator.changeIconStatus(json.response.slug);
                 let debug = "";//  (" + compteur + ") - date : " + new Date();
-                _indicator.setMessage(json._meta.date + "\nTrafic ligne " + _line + " : " + json.response.title + "\n" + json.response.message + debug);
+                let locale = 'fr';
+                let dd = Moment.moment(json._meta.date).locale(locale).format('llll'); // December 21st 2016, 5:46:27 pm
+                _indicator.setMessage(dd + "\n-"+ "\nTrafic ligne " + _line + " : " + json.response.title + "\n" + json.response.message + debug);
             }
 
             _laststatus = "line_" + _line + "_" + json.response.slug;
