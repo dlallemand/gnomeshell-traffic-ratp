@@ -25,6 +25,8 @@ const PopupMenu = imports.ui.popupMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Shell = imports.gi.Shell;
+const Utils = Me.imports.src.utils;
+const Config = imports.misc.config;
 
 const _ = imports.gettext.domain(Me.metadata['gettext-domain']).gettext;
 
@@ -100,7 +102,7 @@ const TrafficRatpMenu = new Lang.Class({
             let [res, out, err, status] = GLib.spawn_command_line_sync("xdg-open http://www.ratp.fr/informer/trafic/trafic.php?cat=2");
 
             if (status == 0) {
-                global.log("Error on opening webbrowser");
+                Utils.log("Error on opening webbrowser");
             }
         });
         this.menu.addMenuItem(item);
@@ -113,15 +115,15 @@ const TrafficRatpMenu = new Lang.Class({
             let app = Shell.AppSystem.get_default().lookup_app("gnome-shell-extension-prefs.desktop");
             if (app != null) {
                 // for Gnome >= 3.12
-                //if( Utils.versionIsAtLeast(Config.PACKAGE_VERSION, "3.12") ) {
-                let info = app.get_app_info();
-                let timestamp = global.display.get_current_time_roundtrip();
-                info.launch_uris([Me.uuid], global.create_app_launch_context(timestamp, -1));
-                //}
+                if (Utils.versionIsAtLeast(Config.PACKAGE_VERSION, "3.12")) {
+                    let info = app.get_app_info();
+                    let timestamp = global.display.get_current_time_roundtrip();
+                    info.launch_uris([Me.uuid], global.create_app_launch_context(timestamp, -1));
+                }
                 // for Gnome < 3.12
-                //else {
-                //	app.launch(global.display.get_current_time_roundtrip(), ['extension:///' + Me.uuid], -1, null);
-                //}
+                else {
+                    app.launch(global.display.get_current_time_roundtrip(), ['extension:///' + Me.uuid], -1, null);
+                }
             }
         });
         this.menu.addMenuItem(settings);

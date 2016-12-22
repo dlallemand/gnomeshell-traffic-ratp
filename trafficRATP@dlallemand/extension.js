@@ -1,5 +1,5 @@
-// Docker menu extension
-// @author Didier LALLEMAND <didier.lallemand@gmail.com>
+// Traffic RATP Gnome Extension
+// @author Didier LALLEMAND <didier.lallemand@free.fr>
 
 /**
     This program is free software: you can redistribute it and/or modify
@@ -13,6 +13,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
+
 
 'use strict';
 
@@ -35,20 +36,16 @@ let lastStatus = "";
 let currentLine;
 let currentLineType;
 let settings;
+// The ratp indicator
+let _indicator;
 
 
-function mainloopInit() {
-    mainloop = Mainloop.timeout_add_seconds(30, Lang.bind(this, updateStatus));
-}
 
-
-function trace(text) {
-    global.log("[TraficRATP] " + text);
-}
 
 function buildStatus(ss) {
     return "line_" + currentLine + "_" + ss;
 }
+
 
 function updateMessage(json) {
 
@@ -63,7 +60,7 @@ function updateMessage(json) {
                 Utils.execCommand();
             }
             _indicator.changeIconStatus(json.response.slug);
-            let locale = 'fr';
+            let locale = Utils.getLocale();
             let dd = Moment.moment(json._meta.date).locale(locale).format('llll');
             _indicator.setMessage(dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message);
         }
@@ -77,11 +74,17 @@ function updateMessage(json) {
 }
 
 function updateStatus() {
+    Utils.log("UpdateStatus...");
     settings = Convenience.getSettings();
     currentLine = settings.get_string('line');
     currentLineType = settings.get_string('line-type');
     RatpAPI.getTraffic(currentLineType, currentLine, updateMessage);
     return true;
+}
+
+
+function mainloopInit() {
+    mainloop = Mainloop.timeout_add_seconds(30, Lang.bind(this, updateStatus));
 }
 
 function mainloopStop() {
@@ -95,13 +98,10 @@ function mainloopStop() {
 function init(extensionMeta) {
     let theme = imports.gi.Gtk.IconTheme.get_default();
     theme.append_search_path(extensionMeta.path + "/icons");
-
     Convenience.initTranslations();
-
 }
 
-// The ratp indicator
-let _indicator;
+
 
 // Triggered when extension is enabled
 function enable() {

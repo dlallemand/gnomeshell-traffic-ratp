@@ -31,8 +31,9 @@ Note : if you switch from one line to another, you have to click twice on extens
 ## Installation
 
 
-- copy _trafficRATP@dlallemand_ extension into  ~/.local/share/gnome-shell/extensions/
-- Restart Gnome-Shell (ALT+F2, r)
+- copy directory _trafficRATP@dlallemand_ into  ~/.local/share/gnome-shell/extensions/
+- restart Gnome-Shell (ALT+F2, r)
+- activate the extension (from gnome-tweak-tool or from firefox https://extensions.gnome.org/local/)
 
 
 ## Contribution

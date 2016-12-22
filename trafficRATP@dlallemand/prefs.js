@@ -20,6 +20,7 @@ const Gtk = imports.gi.Gtk;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.lib.convenience;
 const RatpAPI = Me.imports.src.ratpAPI;
+const Utils = Me.imports.src.utils;
 
 const _ = imports.gettext.domain(Me.metadata['gettext-domain']).gettext;
 
@@ -33,7 +34,7 @@ function init() {
 
 // update json settings for server in settings schema
 function updateSettings(key, value) {
-	global.log("###Settings => set " + key + " to " + value);
+	Utils.log("###Settings => set " + key + " to " + value);
 	settings.set_string(key, value);
 }
 
@@ -64,7 +65,7 @@ function buildRerSettings() {
 
 
 
-	global.log("Setting => RER = " + settings.get_string(type));
+	Utils.log("Setting => RER = " + settings.get_string(type));
 	radioRER_A.set_active(settings.get_string(type) === "A");
 	radioRER_B.set_active(settings.get_string(type) === "B");
 

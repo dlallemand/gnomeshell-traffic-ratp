@@ -1,6 +1,14 @@
 {
     "description": "Give a status of RATP traffic",
     "shell-version": [
+        "3.6",
+        "3.8",
+        "3.10",
+        "3.12",
+        "3.14",
+        "3.16",
+        "3.18",
+        "3.20",
         "3.20.4"
     ],
     "settings-schema": "org.gnome.shell.extensions.traffic-ratp-indicator",
