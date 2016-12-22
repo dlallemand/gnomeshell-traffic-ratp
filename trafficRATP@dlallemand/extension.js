@@ -20,6 +20,7 @@ const Main = imports.ui.main;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const TrafficRatpMenu = Me.imports.src.trafficRatpMenu;
+const Utils = Me.imports.src.utils;
 const RatpAPI = Me.imports.src.ratpAPI;
 const Soup = imports.gi.Soup;
 const Lang = imports.lang;
@@ -29,13 +30,10 @@ const Moment = Me.imports.lib.moment;
 
 
 let mainloop;
-
-let compteur = 0;
-
+let lastLine = "";
 let lastStatus = "";
-
 let currentLine;
-
+let currentLineType;
 let settings;
 
 
@@ -48,17 +46,29 @@ function trace(text) {
     global.log("[TraficRATP] " + text);
 }
 
+function buildStatus(ss) {
+    return "line_" + currentLine + "_" + ss;
+}
+
 function updateMessage(json) {
+
+    if (lastLine !== currentLineType + "_" + currentLine) {
+        _indicator.setIconLine(currentLineType, currentLine);
+        lastLine = currentLineType + "_" + currentLine;
+    }
     if (json != null) {
-        if (lastStatus !== json.response.slug) {
+
+        if (lastStatus !== buildStatus(json.response.slug)) {
+            if (lastStatus != "") {
+                Utils.execCommand();
+            }
             _indicator.changeIconStatus(json.response.slug);
-            let debug = "";//  (" + compteur + ") - date : " + new Date();
             let locale = 'fr';
-            let dd = Moment.moment(json._meta.date).locale(locale).format('llll'); // December 21st 2016, 5:46:27 pm
-            _indicator.setMessage(dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message + debug);
+            let dd = Moment.moment(json._meta.date).locale(locale).format('llll');
+            _indicator.setMessage(dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message);
         }
 
-        lastStatus = "line_" + currentLine + "_" + json.response.slug;
+        lastStatus = buildStatus(json.response.slug);
 
     } else {
         _indicator.changeIconStatus("");
@@ -69,10 +79,8 @@ function updateMessage(json) {
 function updateStatus() {
     settings = Convenience.getSettings();
     currentLine = settings.get_string('line');
-    let lineType = settings.get_string('line-type');
-    trace("call RatpAPI begin...");
-    RatpAPI.getTraffic(lineType, currentLine, updateMessage);
-    trace("call RatpAPI end.");
+    currentLineType = settings.get_string('line-type');
+    RatpAPI.getTraffic(currentLineType, currentLine, updateMessage);
     return true;
 }
 
@@ -98,6 +106,9 @@ let _indicator;
 // Triggered when extension is enabled
 function enable() {
     _indicator = new TrafficRatpMenu.TrafficRatpMenu(updateStatus);
+    let line = settings.get_string('line');
+    let lineType = settings.get_string('line-type');
+    _indicator.setIconLine(lineType, line);
     Main.panel.addToStatusArea('traffic-ratp-menu', _indicator);
     updateStatus();
     mainloopInit();

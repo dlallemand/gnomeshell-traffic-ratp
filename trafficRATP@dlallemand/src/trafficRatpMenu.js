@@ -1,5 +1,5 @@
-// trafficRatp menu extension
-// @author Guillaume Pouilloux <gui.pouilloux@gmail.com>
+// Traffic RATP Gnome Extension
+// @author Didier LALLEMAND <didier.lallemand@free.fr>
 
 /**
     This program is free software: you can redistribute it and/or modify
@@ -38,11 +38,6 @@ const TrafficRatpMenu = new Lang.Class({
     // Init the trafficRatp menu
     _createStatusIcon: function (icn) {
         let params = { icon_name: icn, icon_size: 16, style_class: "system-status-icon" };
-
-        // St.IconType got removed in Gnome 3.6. This is for backwards compatibility with Gnome 3.4.
-        if (St.IconType) {
-            params.icon_type = St.IconType.FULLCOLOR;
-        }
         let ic = new St.Icon(params);
         return ic;
     },
@@ -51,11 +46,10 @@ const TrafficRatpMenu = new Lang.Class({
         this.udpateCallback = callback;
 
         let hbox = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
-        // let gicon = Gio.icon_new_for_string(Me.path + "/icons/status-grey.svg");
-        this.trafficRatpIcon = this._createStatusIcon('status-grey');//new St.Icon({ gicon: gicon, icon_size: '16' });
-
-        hbox.add_child(this.trafficRatpIcon);
-        //hbox.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
+        this.lineIcon = this._createStatusIcon('status-failure');
+        this.statusIcon = this._createStatusIcon('status-failure');
+        hbox.add_child(this.lineIcon);
+        hbox.add_child(this.statusIcon);
         this.actor.add_child(hbox);
         this.actor.connect('button_press_event', Lang.bind(this, this._refreshMenu));
 
@@ -65,21 +59,22 @@ const TrafficRatpMenu = new Lang.Class({
     setMessage: function (message) {
         this.message = message;
     },
+    setIconLine: function (type, line) {
+        this.lineIcon.icon_name = type + "_" + line;
+    },
 
-    changeIconStatus: function (ss) {
-        let statusLabel = ss;
-        if (statusLabel == "normal") {
-            this.trafficRatpIcon.icon_name = 'status-green';
+    changeIconStatus: function (statusLabel) {
+        if (statusLabel === "normal") {
+            this.statusIcon.icon_name = 'status-green';
         }
-        else if (statusLabel == "alerte") {
-            //this.trafficRatpIcon = this._createStatusIcon('status-orange');
-            this.trafficRatpIcon.icon_name = 'status-orange';
+        else if (statusLabel === "alerte") {
+            this.statusIcon.icon_name = 'status-orange';
         }
-        else if (statusLabel == "critique") {
-            this.trafficRatpIcon.icon_name = 'status-red';
+        else if (statusLabel === "critique") {
+            this.statusIcon.icon_name = 'status-red';
         }
         else {
-            this.trafficRatpIcon.icon_name = 'status-grey';
+            this.statusIcon.icon_name = 'status-failure';
         }
     },
 
@@ -131,11 +126,6 @@ const TrafficRatpMenu = new Lang.Class({
         });
         this.menu.addMenuItem(settings);
         this.actor.show();
-    },
-
-    // Append containers to menu
-    _feedMenu: function () {
-
-
     }
+
 });

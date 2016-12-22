@@ -1,6 +1,9 @@
-// Docker menu extension
-// @author Didier LALLEMAND <didier.lallemand@gmail.com>
-// Thanks To Pierre Grimeau for REST API
+// Traffic RATP Gnome Extension
+// @author Didier LALLEMAND <didier.lallemand@free.fr>
+
+// Thanks to Pierre Grimeau for REST API
+
+
 /**
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,81 +23,39 @@ const Soup = imports.gi.Soup;
 const Lang = imports.lang;
 
 
+const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2" // see https://github.com/pgrimaud/horaires-ratp-api
 
-const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2"
-
-
-function buildRequestTraffic(type, line) {
-    let req = BASE_URL + "/traffic/" + type + "/" + line;
-    return req;
+function _request(req, callback, params = {}) {
+    let httpSession = new Soup.Session();
+    let message = Soup.form_request_new_from_hash('GET', req, {});
+    httpSession.queue_message(message, Lang.bind(this,
+        function (_httpSession, message) {
+            if (message.status_code !== 200) {
+                callback(null);
+                return;
+            }
+            else {
+                let json = JSON.parse(message.response_body.data);
+                callback(json);
+            }
+        })
+    );
 }
 
 function getTraffic(type, line, fctupdate) {
-    let httpSession = new Soup.Session();
-    let req = buildRequestTraffic(type, line);
-    global.log("getTraffic => req " + req);
+    let req = BASE_URL + "/traffic/" + type + "/" + line;
+    _request(req, fctupdate);
 
-    let message = Soup.form_request_new_from_hash('GET', req, {});
-    httpSession.queue_message(message, Lang.bind(this,
-        function (_httpSession, message) {
-            if (message.status_code !== 200) {
-                fctupdate(null);
-                return;
-            }
-            else {
-                let json = JSON.parse(message.response_body.data);
-                fctupdate(json);
-            }
-        })
-    );
 }
 
-
-function buildRequestLines(type, fctupdate) {
-    let req = BASE_URL + "/" + type;
-    return req;
-}
 function getLines(type, fctupdate) {
-    let httpSession = new Soup.Session();
-    let req = buildRequestLines(type);
-    global.log("getLines => req " + req);
-    let message = Soup.form_request_new_from_hash('GET', req, {});
-    httpSession.queue_message(message, Lang.bind(this,
-        function (_httpSession, message) {
-            if (message.status_code !== 200) {
-                fctupdate(null);
-                return;
-            }
-            else {
-                let json = JSON.parse(message.response_body.data);
-                global.log("RESULT=>" + JSON.stringify(json, null, 4));
-                fctupdate(json);
-            }
-        })
-    );
+    let req = BASE_URL + "/" + type;
+    _request(req, fctupdate);
 }
 
-
-function buildRequestStations(type, line) {
-    let req = BASE_URL + "/" + type + "/" + line + "/stations";
-    return req;
-}
 function getStations(type, line, fctupdate) {
-    let httpSession = new Soup.Session();
-    let req = buildRequestStations(type, line);
-    let message = Soup.form_request_new_from_hash('GET', req, {});
-    httpSession.queue_message(message, Lang.bind(this,
-        function (_httpSession, message) {
-            if (message.status_code !== 200) {
-                fctupdate(null);
-                return;
-            }
-            else {
-                let json = JSON.parse(message.response_body.data);
-                fctupdate(json);
-            }
-        })
-    );
+    let req = BASE_URL + "/" + type + "/" + line + "/stations";
+    _request(req, fctupdate);
 }
 
 function buildRequestTimetable(type, line, origin, destination) {
@@ -102,20 +63,7 @@ function buildRequestTimetable(type, line, origin, destination) {
     return req;
 }
 function getTimetable(type, line, origin, destination, fctupdate) {
-    let httpSession = new Soup.Session();
-    let req = buildRequestStations(type, line, origin, destination);
+    let req = BASE_URL + "/" + type + "/" + line + "/stations/" + origin;
     let params = { destination: destination };
-    let message = Soup.form_request_new_from_hash('GET', req, params);
-    httpSession.queue_message(message, Lang.bind(this,
-        function (_httpSession, message) {
-            if (message.status_code !== 200) {
-                fctupdate(null);
-                return;
-            }
-            else {
-                let json = JSON.parse(message.response_body.data);
-                fctupdate(json);
-            }
-        })
-    );
+    _request(req, fctupdate, params);
 }

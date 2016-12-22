@@ -18,7 +18,11 @@
 			<summary>Subway Line</summary>
 			<description>Settings Traffic RATP to set subway line preference</description>
 		</key>
-		
+		<key type="s" name="command-on-status-change">
+			<default>''</default>
+			<summary>Command to execute</summary>
+			<description>Command to execute on traffic status change</description>
+		</key>
 	 
 	</schema>
 </schemalist>

@@ -1,6 +1,18 @@
-/*
- * @author Didier LALLEMAND
- */
+// Traffic RATP Gnome Extension
+// @author Didier LALLEMAND <didier.lallemand@free.fr>
+
+/**
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 2 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**/
 
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
@@ -11,9 +23,7 @@ const RatpAPI = Me.imports.src.ratpAPI;
 
 const _ = imports.gettext.domain(Me.metadata['gettext-domain']).gettext;
 
-let settings, settingsJSON;
-
-
+let settings;
 let frame;
 
 function init() {
@@ -27,6 +37,21 @@ function updateSettings(key, value) {
 	settings.set_string(key, value);
 }
 
+
+function buildCommandToExecSettings() {
+
+	let hboxLine = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
+	let command = settings.get_string("command-on-status-change");
+	let labelCommand = new Gtk.Label({ label: _("Command"), xalign: 0 });
+	let inputCommand = new Gtk.Entry({ hexpand: true, text: command });
+	inputCommand.connect("changed", Lang.bind(this, function (input) { settings.set_string("command-on-status-change", input.text); }));
+
+
+	hboxLine.add(labelCommand);
+	hboxLine.add(inputCommand);
+	return hboxLine;
+
+}
 
 function buildRerSettings() {
 	// -- RER Parameter
@@ -73,6 +98,8 @@ function buildPrefsWidget() {
 
 	// add notebook
 	frame.add(notebook);
+
+	frame.add(buildCommandToExecSettings());
 
 	// show the frame
 	frame.show_all();
