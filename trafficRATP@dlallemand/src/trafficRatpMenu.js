@@ -66,8 +66,10 @@ const TrafficRatpMenu = new Lang.Class({
     },
 
     changeIconStatus: function (statusLabel) {
+        Utils.log("Change icon status:" + statusLabel);
         if (statusLabel === "normal") {
             this.statusIcon.icon_name = 'status-green';
+            Utils.log("!!!!!!! statusIcon.icon_name set to status-green !!!!!!");
         }
         else if (statusLabel === "alerte") {
             this.statusIcon.icon_name = 'status-orange';
@@ -77,6 +79,7 @@ const TrafficRatpMenu = new Lang.Class({
         }
         else {
             this.statusIcon.icon_name = 'status-failure';
+            Utils.log("!!!!!!! statusIcon.icon_name set to status-failure !!!!!!!!!!!");
         }
     },
 

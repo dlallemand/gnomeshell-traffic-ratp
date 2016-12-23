@@ -48,14 +48,16 @@ function buildStatus(ss) {
 
 
 function updateMessage(json) {
+    Utils.log("updateMessage...");
 
     if (lastLine !== currentLineType + "_" + currentLine) {
         _indicator.setIconLine(currentLineType, currentLine);
         lastLine = currentLineType + "_" + currentLine;
     }
     if (json != null) {
+        Utils.log("updateMessage...(json!=null) ; lastStatus=" + lastStatus);
 
-        if (lastStatus !== buildStatus(json.response.slug)) {
+        if (lastStatus !== buildStatus(json.response.title)) {
             if (lastStatus != "") {
                 Utils.execCommand();
             }
@@ -65,9 +67,11 @@ function updateMessage(json) {
             _indicator.setMessage(dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message);
         }
 
-        lastStatus = buildStatus(json.response.slug);
+        lastStatus = buildStatus(json.response.title);
 
     } else {
+        Utils.log("updateMessage...(json==null !!!)");
+        lastStatus = "";
         _indicator.changeIconStatus("");
         _indicator.setMessage(null);
     }

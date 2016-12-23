@@ -21,6 +21,10 @@
 
 const Soup = imports.gi.Soup;
 const Lang = imports.lang;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Utils = Me.imports.src.utils;
+
 
 
 const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2" // see https://github.com/pgrimaud/horaires-ratp-api
@@ -28,13 +32,16 @@ const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2" // see https://github.c
 function _request(req, callback, params = {}) {
     let httpSession = new Soup.Session();
     let message = Soup.form_request_new_from_hash('GET', req, {});
+    Utils.log("REQ: "+req+"...");
     httpSession.queue_message(message, Lang.bind(this,
         function (_httpSession, message) {
+            Utils.log("Response status code : "+message.status_code);
             if (message.status_code !== 200) {
                 callback(null);
                 return;
             }
             else {
+                 Utils.log("Response status 200 => : callback");
                 let json = JSON.parse(message.response_body.data);
                 callback(json);
             }
