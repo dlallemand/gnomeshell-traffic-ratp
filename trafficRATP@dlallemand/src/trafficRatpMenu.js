@@ -57,7 +57,15 @@ const TrafficRatpMenu = new Lang.Class({
 
         this._renderMenu();
     },
-
+    getTitle: function () {
+        return this.title;
+    },
+    setTitle: function (title) {
+        this.title = title;
+    },
+    getMessage: function () {
+        return this.message;
+    },
     setMessage: function (message) {
         this.message = message;
     },

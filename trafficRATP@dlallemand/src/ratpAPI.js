@@ -32,17 +32,23 @@ const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2" // see https://github.c
 function _request(req, callback, params = {}) {
     let httpSession = new Soup.Session();
     let message = Soup.form_request_new_from_hash('GET', req, {});
-    Utils.log("REQ: "+req+"...");
+    Utils.log("REQ: " + req + "...");
     httpSession.queue_message(message, Lang.bind(this,
         function (_httpSession, message) {
-            Utils.log("Response status code : "+message.status_code);
+            Utils.log("Response status code : " + message.status_code);
             if (message.status_code !== 200) {
                 callback(null);
                 return;
             }
             else {
-                 Utils.log("Response status 200 => : callback");
+                Utils.log("Response status 200 => : callback");
                 let json = JSON.parse(message.response_body.data);
+                if (json == null) {
+                    Utils.log("Response status 200 => : json IS NULL !!!??? => " + json);
+                }
+                else {
+                    Utils.log("Response status 200 => : json is not null :" + json);
+                }
                 callback(json);
             }
         })

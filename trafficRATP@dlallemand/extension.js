@@ -32,7 +32,6 @@ const Moment = Me.imports.lib.moment;
 
 let mainloop;
 let lastLine = "";
-let lastStatus = "";
 let currentLine;
 let currentLineType;
 let settings;
@@ -40,38 +39,37 @@ let settings;
 let _indicator;
 
 
-
-
-function buildStatus(ss) {
-    return "line_" + currentLine + "_" + ss;
-}
-
-
 function updateMessage(json) {
     Utils.log("updateMessage...");
-
-    if (lastLine !== currentLineType + "_" + currentLine) {
+    let line = currentLineType + "_" + currentLine;
+    if (lastLine !== line) {
         _indicator.setIconLine(currentLineType, currentLine);
-        lastLine = currentLineType + "_" + currentLine;
+        lastLine = line;
     }
     if (json != null) {
-        Utils.log("updateMessage...(json!=null) ; lastStatus=" + lastStatus);
+        let currentStatus = _indicator.getTitle();
+        let newStatus = currentLine + " : " + json.response.title;
+        Utils.log("updateMessage...-- ; newStatus=" + newStatus);
+        Utils.log("updateMessage...-- ; currentStatus=" + currentStatus);
 
-        if (lastStatus !== buildStatus(json.response.title)) {
-            if (lastStatus != "") {
+        if (newStatus !== currentStatus) {
+            Utils.log("###### Updating Message...");
+            if (_indicator.getMessage() != null) {
+                Utils.log("currentStatus=>>>" + currentStatus);
+
                 Utils.execCommand();
             }
             _indicator.changeIconStatus(json.response.slug);
             let locale = Utils.getLocale();
             let dd = Moment.moment(json._meta.date).locale(locale).format('llll');
-            _indicator.setMessage(dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message);
+            let message =dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message ;
+
+            _indicator.setTitle(newStatus);
+            _indicator.setMessage(newStatus);
+            Utils.log("###### Update Message done.");
         }
-
-        lastStatus = buildStatus(json.response.title);
-
     } else {
         Utils.log("updateMessage...(json==null !!!)");
-        lastStatus = "";
         _indicator.changeIconStatus("");
         _indicator.setMessage(null);
     }
