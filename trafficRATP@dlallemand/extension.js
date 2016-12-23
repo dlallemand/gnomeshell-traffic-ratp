@@ -62,10 +62,10 @@ function updateMessage(json) {
             _indicator.changeIconStatus(json.response.slug);
             let locale = Utils.getLocale();
             let dd = Moment.moment(json._meta.date).locale(locale).format('llll');
-            let message =dd + "\n-" + "\nTrafic ligne " + currentLine + " : " + json.response.title + "\n" + json.response.message ;
+            let message =dd + "\n-" + "\nLigne " + currentLine + " : " + json.response.title + "\n" + json.response.message ;
 
             _indicator.setTitle(newStatus);
-            _indicator.setMessage(newStatus);
+            _indicator.setMessage(message);
             Utils.log("###### Update Message done.");
         }
     } else {
