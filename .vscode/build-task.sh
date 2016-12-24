@@ -14,6 +14,6 @@ done && echo 'ok' || echo 'failed'
 
 
 echo -n "Install extension..."
-cp -R * ~/.local/share/gnome-shell/extensions && echo 'ok' || echo 'failed'
+cp -R *@* ~/.local/share/gnome-shell/extensions && echo 'ok' || echo 'failed'
 
 echo "Done."

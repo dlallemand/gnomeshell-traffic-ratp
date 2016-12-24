@@ -27,7 +27,7 @@ let settings;
 
 
 function log(text) {
-    global.log("[TrafficRATP] " + Moment.moment().locale(getLocale()).format('YYYY-MM-DD HH:mm:SS') + " "+ text);
+    //global.log("[TrafficRATP] " + Moment.moment().locale(getLocale()).format('YYYY-MM-DD HH:mm:SS') + " "+ text);
 }
 
 function execCommand() {

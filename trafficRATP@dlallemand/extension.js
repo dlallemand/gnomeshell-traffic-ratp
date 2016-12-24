@@ -72,6 +72,7 @@ function updateMessage(json) {
         Utils.log("updateMessage...(json==null !!!)");
         _indicator.changeIconStatus("");
         _indicator.setMessage(null);
+        _indicator.setTitle(null);
     }
 }
 

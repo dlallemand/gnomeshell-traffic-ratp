@@ -50,6 +50,7 @@ const TrafficRatpMenu = new Lang.Class({
         let hbox = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
         this.lineIcon = this._createStatusIcon('status-failure');
         this.statusIcon = this._createStatusIcon('status-failure');
+        this.message=null;
         hbox.add_child(this.lineIcon);
         hbox.add_child(this.statusIcon);
         this.actor.add_child(hbox);
