@@ -23,6 +23,8 @@ const Me = ExtensionUtils.getCurrentExtension();
 const TrafficRatpMenu = Me.imports.src.trafficRatpMenu;
 const Utils = Me.imports.src.utils;
 const RatpAPI = Me.imports.src.ratpAPI;
+const Notify = Me.imports.src.notify;
+
 const Soup = imports.gi.Soup;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
@@ -38,6 +40,7 @@ let settings;
 // The ratp indicator
 let _indicator;
 
+const _ = imports.gettext.domain(Me.metadata['gettext-domain']).gettext;
 
 function updateMessage(json) {
     Utils.log("updateMessage...");
@@ -62,7 +65,16 @@ function updateMessage(json) {
             _indicator.changeIconStatus(json.response.slug);
             let locale = Utils.getLocale();
             let dd = Moment.moment(json._meta.date).locale(locale).format('llll');
-            let message =dd + "\n-" + "\nLigne " + currentLine + " : " + json.response.title + "\n" + json.response.message ;
+            let message = dd + "\n-" + "\n" + _("Line") + " " + currentLine + " : " + json.response.title + "\n" + json.response.message;
+
+            let notifyTitle = _("Line") + " " + currentLine;
+            let notifyMessage = json.response.message;
+            if (json.response.slug == "normal") {
+                Notify.info(notifyTitle, notifyMessage);
+            }
+            else {
+                Notify.warn(notifyTitle, notifyMessage);
+            }
 
             _indicator.setTitle(newStatus);
             _indicator.setMessage(message);
