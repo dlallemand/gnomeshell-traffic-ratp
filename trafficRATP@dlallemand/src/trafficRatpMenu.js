@@ -83,6 +83,9 @@ const TrafficRatpMenu = new Lang.Class({
         else if (statusLabel === "alerte") {
             this.statusIcon.icon_name = 'status-orange';
         }
+        else if (statusLabel === "normal_trav") {
+            this.statusIcon.icon_name = 'status-orange';
+        }
         else if (statusLabel === "critique") {
             this.statusIcon.icon_name = 'status-red';
         }
