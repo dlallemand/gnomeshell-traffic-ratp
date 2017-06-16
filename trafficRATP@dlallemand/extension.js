@@ -51,7 +51,7 @@ function updateMessage(json) {
     }
     if (json != null) {
         let currentStatus = _indicator.getTitle();
-        let newStatus = currentLine + " : " + json.response.title;
+        let newStatus = currentLine + " : " + json.result.title;
         Utils.log("updateMessage...-- ; newStatus=" + newStatus);
         Utils.log("updateMessage...-- ; currentStatus=" + currentStatus);
 
@@ -62,14 +62,14 @@ function updateMessage(json) {
 
                 Utils.execCommand();
             }
-            _indicator.changeIconStatus(json.response.slug);
+            _indicator.changeIconStatus(json.result.slug);
             let locale = Utils.getLocale();
             let dd = Moment.moment(json._meta.date).locale(locale).format('llll');
-            let message = dd + "\n-" + "\n" + _("Line") + " " + currentLine + " : " + json.response.title + "\n" + json.response.message;
+            let message = dd + "\n-" + "\n" + _("Line") + " " + currentLine + " : " + json.result.title + "\n" + json.result.message;
 
             let notifyTitle = _("Line") + " " + currentLine;
-            let notifyMessage = json.response.message;
-            if (json.response.slug == "normal") {
+            let notifyMessage = json.result.message;
+            if (json.result.slug == "normal") {
                 Notify.info(notifyTitle, notifyMessage);
             }
             else {

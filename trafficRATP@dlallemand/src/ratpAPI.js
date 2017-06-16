@@ -27,7 +27,7 @@ const Utils = Me.imports.src.utils;
 
 
 
-const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v2" // see https://github.com/pgrimaud/horaires-ratp-api
+const BASE_URL = "https://api-ratp.pierre-grimaud.fr/v3" // see https://github.com/pgrimaud/horaires-ratp-api
 
 function _request(req, callback, params = {}) {
     let httpSession = new Soup.Session();
