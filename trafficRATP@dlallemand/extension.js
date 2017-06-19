@@ -64,7 +64,7 @@ function updateMessage(json) {
             }
             _indicator.changeIconStatus(json.result.slug);
             let locale = Utils.getLocale();
-            let dd = Moment.moment(json._meta.date).locale(locale).format('llll');
+            let dd = Moment.moment(json._metadata.date).locale(locale).format('llll');
             let message = dd + "\n-" + "\n" + _("Line") + " " + currentLine + " : " + json.result.title + "\n" + json.result.message;
 
             let notifyTitle = _("Line") + " " + currentLine;
